@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mira's Love Adventure ❤️ - Made by Aleem</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    
+    <header class="pixel-header">
+        <div class="header-content">
+            <h1 class="title">MIRA'S LOVE ADVENTURE</h1>
+            <div class="creator-info">
+                <span class="made-by">Made with 💖 by</span>
+                <span class="creator-name">ALEEM</span>
+            </div>
+            <div class="heart-container">
+                <div class="heart"></div>
+                <div class="heart"></div>
+                <div class="heart"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="game-container">
+        <div class="game-info">
+            <div class="score-board">
+                <span class="score-label">LOVE SCORE:</span>
+                <span id="score">0</span>
+            </div>
+            <div class="lives">
+                <span class="lives-label">HEARTS:</span>
+                <div id="lives-container">
+                    <div class="life-heart">❤️</div>
+                    <div class="life-heart">❤️</div>
+                    <div class="life-heart">❤️</div>
+                </div>
+            </div>
+            <div class="level-info">
+                <span class="level-label">LEVEL:</span>
+                <span id="level">1</span>
+            </div>
+            <div class="high-score">
+                <span class="high-score-label">HIGH SCORE:</span>
+                <span id="highScore">0</span>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="game-controls">
+            <button id="startBtn" class="pixel-btn primary-btn">START GAME</button>
+            <button id="pauseBtn" class="pixel-btn">PAUSE</button>
+            <button id="resetBtn" class="pixel-btn">RESET</button>
+            <button id="loveMessageBtn" class="pixel-btn special-btn">💕 LOVE MESSAGE 💕</button>
+        </div>
+
+        <div class="content-sections">
+            <div class="section-grid">
+                <div class="love-message-section">
+                    <div class="message-box">
+                        <h3>💖 Love Messages for Mira 💖</h3>
+                        <div id="loveMessage" class="love-text">
+                            Click the button above to generate a special love message for Mira! 💕
+                        </div>
+                        <div class="message-controls">
+                            <button id="generateMessageBtn" class="pixel-btn-small">Generate New Message</button>
+                            <button id="copyMessageBtn" class="pixel-btn-small">Copy Message</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="character-customization">
+                    <h3>🎀 Customize Your Character 🎀</h3>
+                    <div class="character-options">
+                        <div class="option-group">
+                            <label>Select Character:</label>
+                            <select id="characterSelect" class="pixel-select">
+                                <option value="mira">Mira (The original Mira character)</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Hair Color:</label>
+                            <select id="hairColor" class="pixel-select">
+                                <option value="#8B4513">Brown</option>
+                                <option value="#FFD700">Blonde</option>
+                                <option value="#FF69B4">Pink</option>
+                                <option value="#FF1493">Hot Pink</option>
+                                <option value="#9370DB">Purple</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Dress Color:</label>
+                            <select id="dressColor" class="pixel-select">
+                                <option value="#FF69B4">Pink</option>
+                                <option value="#FF1493">Hot Pink</option>
+                                <option value="#FFB6C1">Light Pink</option>
+                                <option value="#FFC0CB">Baby Pink</option>
+                                <option value="#FF69B4">Rose</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Accessory:</label>
+                            <select id="accessory" class="pixel-select">
+                                <option value="none">None</option>
+                                <option value="bow">Bow</option>
+                                <option value="crown">Crown</option>
+                                <option value="wings">Wings</option>
+                                <option value="sparkles">Sparkles</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>🎮 HOW TO PLAY:</h3>
+                <div class="instructions-grid">
+                    <div class="instruction-item">
+                        <span class="instruction-icon">⬆️⬇️⬅️➡️</span>
+                        <p>Use ARROW KEYS to move your character</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">💖</span>
+                        <p>Collect floating hearts for points!</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">⚠️</span>
+                        <p>Avoid the falling obstacles</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">⭐</span>
+                        <p>Get power-ups for special abilities!</p>
+                    </div>
+                    <div class="instruction-item">
+                        <span class="instruction-icon">🏆</span>
+                        <p>Get the highest love score! 💕</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="power-ups-info">
+                <h3>🌟 POWER-UPS 🌟</h3>
+                <div class="power-up-grid">
+                    <div class="power-up-item">
+                        <div class="power-up-icon">⭐</div>
+                        <div class="power-up-details">
+                            <span class="power-up-name">Star Shield</span>
+                            <span class="power-up-desc">Temporary invincibility</span>
+                        </div>
+                    </div>
+                    <div class="power-up-item">
+                        <div class="power-up-icon">💎</div>
+                        <div class="power-up-details">
+                            <span class="power-up-name">Diamond Multiplier</span>
+                            <span class="power-up-desc">Double points</span>
+                        </div>
+                    </div>
+                    <div class="power-up-item">
+                        <div class="power-up-icon">🌈</div>
+                        <div class="power-up-details">
+                            <span class="power-up-name">Rainbow Trail</span>
+                            <span class="power-up-desc">Collect all hearts in range</span>
+                        </div>
+                    </div>
+                    <div class="power-up-item">
+                        <div class="power-up-icon">✨</div>
+                        <div class="power-up-details">
+                            <span class="power-up-name">Sparkle Burst</span>
+                            <span class="power-up-desc">Clear all obstacles</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="floating-hearts">
+        <div class="floating-heart">💖</div>
+        <div class="floating-heart">💕</div>
+        <div class="floating-heart">💗</div>
+        <div class="floating-heart">💓</div>
+        <div class="floating-heart">💝</div>
+        <div class="floating-heart">💖</div>
+        <div class="floating-heart">💕</div>
+        <div class="floating-heart">💗</div>
+    </div>
+
+    <footer class="pixel-footer">
+        <div class="footer-content">
+            <div class="footer-main">
+                <p class="footer-title">Made with 💖 for Mira</p>
+                <p class="footer-subtitle">Pixel Art Love Adventure</p>
+                <p class="footer-detail">Every pixel crafted with love! 💕✨</p>
+            </div>
+            <div class="footer-creator">
+                <p class="creator-signature">Created by <span class="creator-name-footer">ALEEM</span></p>
+                <p class="love-note">For the most amazing Mira 💖</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="game.js"></script>
+</body>
+</html>
