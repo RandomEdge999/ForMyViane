@@ -8,12 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="hud">
+        <div class="hud-left">
+            <span class="hud-item">Score: <strong id="hudScore">0</strong></span>
+            <span class="hud-item">Level: <strong id="hudLevel">1</strong></span>
+            <span class="hud-item">High: <strong id="hudHigh">0</strong></span>
+        </div>
+        <div class="hud-right" id="hudLives"></div>
+    </div>
     <div class="stars"></div>
     <div class="twinkling"></div>
     
     <header class="pixel-header">
         <div class="header-content">
             <h1 class="title rainbow-text pulse-love">VIANE'S LOVE ADVENTURE</h1>
+            <div class="settings-controls">
+                <button id="themeToggleBtn" class="pixel-btn-small">Pastel Theme</button>
+                <button id="effectsToggleBtn" class="pixel-btn-small">Reduce Effects</button>
+            </div>
             <div class="creator-info">
                 <span class="made-by">Made with 💖 by</span>
                 <span class="creator-name">ALEEM</span>
@@ -26,16 +38,10 @@
         </div>
     </header>
 
-    <nav class="nav-tabs">
-        <button class="tab active" data-target="gameSection">Game</button>
-        <button class="tab" data-target="loveMessages">Messages</button>
-        <button class="tab" data-target="characterCustomization">Customize</button>
-        <button class="tab" data-target="powerUps">Power-Ups</button>
-        <button class="tab" data-target="loveStats">Stats</button>
-        <button class="tab" data-target="romanticQuotes">Quotes</button>
-    </nav>
+    
 
     <main>
+        <div class="game-container">
         <div id="gameSection" class="tab-content active">
             <div class="game-info">
             <div class="score-board">
@@ -69,6 +75,16 @@
             <button id="pauseBtn" class="pixel-btn">PAUSE</button>
             <button id="resetBtn" class="pixel-btn">RESET</button>
             <button id="loveMessageBtn" class="pixel-btn special-btn">💕 LOVE MESSAGE 💕</button>
+            <button id="fullscreenBtn" class="pixel-btn">FULLSCREEN</button>
+        </div>
+
+        <div class="mobile-controls" id="mobileControls">
+            <button class="dpad up" aria-label="Up">▲</button>
+            <div class="middle-row">
+                <button class="dpad left" aria-label="Left">◀</button>
+                <button class="dpad down" aria-label="Down">▼</button>
+                <button class="dpad right" aria-label="Right">▶</button>
+            </div>
         </div>
 
         <div class="sound-player">
@@ -128,9 +144,8 @@
                 </div>
             </div>
         </div>
-        </div>
 
-        <div id="loveMessages" class="love-message-section tab-content">
+        <div id="loveMessages" class="love-message-section">
             <div class="message-box">
                 <h3>💖 Love Messages for Viane 💖</h3>
                 <div id="loveMessage" class="love-text">
@@ -142,134 +157,7 @@
                 </div>
             </div>
         </div>
-
-        <div id="characterCustomization" class="character-customization tab-content">
-                    <h3>🎀 Customize Your Character 🎀</h3>
-                    <div class="character-options">
-                        <div class="option-group">
-                            <label>Select Character:</label>
-                            <select id="characterSelect" class="pixel-select">
-                                <option value="viane">Viane (The original Viane character)</option>
-                            </select>
-                        </div>
-                        <div class="option-group">
-                            <label>Hair Color:</label>
-                            <select id="hairColor" class="pixel-select">
-                                <option value="#8B4513">Brown</option>
-                                <option value="#FFD700">Blonde</option>
-                                <option value="#FF69B4">Pink</option>
-                                <option value="#FF1493">Hot Pink</option>
-                                <option value="#9370DB">Purple</option>
-                            </select>
-                        </div>
-                        <div class="option-group">
-                            <label>Dress Color:</label>
-                            <select id="dressColor" class="pixel-select">
-                                <option value="#FF69B4">Pink</option>
-                                <option value="#FF1493">Hot Pink</option>
-                                <option value="#FFB6C1">Light Pink</option>
-                                <option value="#FFC0CB">Baby Pink</option>
-                                <option value="#FF69B4">Rose</option>
-                            </select>
-                        </div>
-                        <div class="option-group">
-                            <label>Accessory:</label>
-                            <select id="accessory" class="pixel-select">
-                                <option value="none">None</option>
-                                <option value="bow">Bow</option>
-                                <option value="crown">Crown</option>
-                                <option value="wings">Wings</option>
-                                <option value="sparkles">Sparkles</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
         </div>
-
-        <div id="powerUps" class="power-ups-info tab-content">
-                <h3>🌟 POWER-UPS 🌟</h3>
-                <div class="power-up-grid">
-                    <div class="power-up-item">
-                        <div class="power-up-icon">⭐</div>
-                        <div class="power-up-details">
-                            <span class="power-up-name">Star Shield</span>
-                            <span class="power-up-desc">Temporary invincibility</span>
-                        </div>
-                    </div>
-                    <div class="power-up-item">
-                        <div class="power-up-icon">💎</div>
-                        <div class="power-up-details">
-                            <span class="power-up-name">Diamond Multiplier</span>
-                            <span class="power-up-desc">Double points</span>
-                        </div>
-                    </div>
-                    <div class="power-up-item">
-                        <div class="power-up-icon">🌈</div>
-                        <div class="power-up-details">
-                            <span class="power-up-name">Rainbow Trail</span>
-                            <span class="power-up-desc">Collect all hearts in range</span>
-                        </div>
-                    </div>
-                    <div class="power-up-item">
-                        <div class="power-up-icon">✨</div>
-                        <div class="power-up-details">
-                            <span class="power-up-name">Sparkle Burst</span>
-                            <span class="power-up-desc">Clear all obstacles</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        <div id="loveStats" class="love-stats tab-content">
-            <h3>💕 LOVE STATISTICS 💕</h3>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-icon">💖</div>
-                    <div class="stat-details">
-                        <span class="stat-name">Hearts Collected</span>
-                        <span class="stat-value" id="heartsCollected">0</span>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-icon">💕</div>
-                    <div class="stat-details">
-                        <span class="stat-name">Love Level</span>
-                        <span class="stat-value" id="loveLevel">1</span>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-icon">💗</div>
-                    <div class="stat-details">
-                        <span class="stat-name">Perfect Days</span>
-                        <span class="stat-value" id="perfectDays">0</span>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-icon">💓</div>
-                    <div class="stat-details">
-                        <span class="stat-name">Viane's Happiness</span>
-                        <span class="stat-value" id="vianeHappiness">100%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="romanticQuotes" class="romantic-quotes tab-content">
-            <h3>💝 ROMANTIC QUOTES FOR VIANE 💝</h3>
-            <div class="quotes-container">
-                <div class="quote-item">
-                    <p class="quote-text">"Viane, you are my sunshine on a cloudy day!" ☀️</p>
-                </div>
-                <div class="quote-item">
-                    <p class="quote-text">"Every moment with you is a treasure, Viane!" 💎</p>
-                </div>
-                <div class="quote-item">
-                    <p class="quote-text">"Viane, you make my heart skip a beat!" 💓</p>
-                </div>
-                <div class="quote-item">
-                    <p class="quote-text">"You are the most beautiful person I know, Viane!" 🌹</p>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -320,6 +208,18 @@
             </div>
         </div>
     </footer>
+
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <h2>Game Over</h2>
+            <p id="finalScoreText">Score: 0</p>
+            <p id="finalLevelText">Level: 1</p>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button id="playAgainBtn" class="pixel-btn primary-btn">Play Again</button>
+                <button id="shareScoreBtn" class="pixel-btn">Share Score</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="highscore.js"></script>

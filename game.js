@@ -221,21 +221,25 @@ class LoveGame {
             this.copyLoveMessage();
         });
         
-        // Character customization
-        document.getElementById('hairColor').addEventListener('change', (e) => {
+        // Character customization (optional UI)
+        const hairColorEl = document.getElementById('hairColor');
+        hairColorEl?.addEventListener('change', (e) => {
             this.player.hairColor = e.target.value;
         });
         
-        document.getElementById('dressColor').addEventListener('change', (e) => {
+        const dressColorEl = document.getElementById('dressColor');
+        dressColorEl?.addEventListener('change', (e) => {
             this.player.dressColor = e.target.value;
         });
         
-        document.getElementById('accessory').addEventListener('change', (e) => {
+        const accessoryEl = document.getElementById('accessory');
+        accessoryEl?.addEventListener('change', (e) => {
             this.player.accessory = e.target.value;
         });
         
-        // Character selection
-        document.getElementById('characterSelect').addEventListener('change', (e) => {
+        // Character selection (optional UI)
+        const characterSelectEl = document.getElementById('characterSelect');
+        characterSelectEl?.addEventListener('change', (e) => {
             this.selectedCharacter = e.target.value;
             this.playerPattern = this.characterPatterns[this.selectedCharacter];
         });
@@ -1518,12 +1522,18 @@ class LoveGame {
     updateUI() {
         // Update score
         document.getElementById('score').textContent = this.score;
+        const hudScore = document.getElementById('hudScore');
+        if (hudScore) hudScore.textContent = this.score;
         
         // Update level
         document.getElementById('level').textContent = this.level;
+        const hudLevel = document.getElementById('hudLevel');
+        if (hudLevel) hudLevel.textContent = this.level;
         
         // Update high score
         document.getElementById('highScore').textContent = this.highScore;
+        const hudHigh = document.getElementById('hudHigh');
+        if (hudHigh) hudHigh.textContent = this.highScore;
         
         // Update lives
         const livesContainer = document.getElementById('lives-container');
@@ -1534,18 +1544,32 @@ class LoveGame {
             heart.textContent = '❤️';
             livesContainer.appendChild(heart);
         }
+        const hudLives = document.getElementById('hudLives');
+        if (hudLives) {
+            hudLives.innerHTML = '';
+            for (let i = 0; i < this.lives; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'life-heart';
+                heart.textContent = '❤️';
+                hudLives.appendChild(heart);
+            }
+        }
 
-        // Update love statistics
-        document.getElementById('heartsCollected').textContent = this.heartsCollected;
-        document.getElementById('loveLevel').textContent = this.loveLevel;
-        document.getElementById('perfectDays').textContent = this.perfectDays;
-        document.getElementById('vianeHappiness').textContent = this.vianeHappiness + '%';
+        // Update love statistics (optional UI)
+        const heartsCollectedEl = document.getElementById('heartsCollected');
+        const loveLevelEl = document.getElementById('loveLevel');
+        const perfectDaysEl = document.getElementById('perfectDays');
+        const vianeHappinessEl = document.getElementById('vianeHappiness');
+        if (heartsCollectedEl) heartsCollectedEl.textContent = this.heartsCollected;
+        if (loveLevelEl) loveLevelEl.textContent = this.loveLevel;
+        if (perfectDaysEl) perfectDaysEl.textContent = this.perfectDays;
+        if (vianeHappinessEl) vianeHappinessEl.textContent = this.vianeHappiness + '%';
 
-        // Update character selection dropdown
-        this.updateCharacterSelection();
-        
-        // Check for character unlocks
-        this.checkCharacterUnlocks();
+        // Update character selection dropdown and unlocks only if UI exists
+        if (document.getElementById('characterSelect')) {
+            this.updateCharacterSelection();
+            this.checkCharacterUnlocks();
+        }
         
         // Update high score
         if (this.score > this.highScore) {
@@ -1582,6 +1606,7 @@ class LoveGame {
     
     updateCharacterSelection() {
         const characterSelect = document.getElementById('characterSelect');
+        if (!characterSelect) return;
         characterSelect.innerHTML = ''; // Clear existing options
         
         this.availableCharacters.forEach(char => {
@@ -1645,6 +1670,13 @@ class LoveGame {
     gameOver() {
         this.gameRunning = false;
         this.showGameOverMessage();
+        // Show modal
+        const modal = document.getElementById('gameOverModal');
+        const scoreText = document.getElementById('finalScoreText');
+        const levelText = document.getElementById('finalLevelText');
+        if (scoreText) scoreText.textContent = `Score: ${this.score}`;
+        if (levelText) levelText.textContent = `Level: ${this.level}`;
+        if (modal) modal.style.display = 'block';
         document.getElementById('startBtn').disabled = false;
         document.getElementById('pauseBtn').disabled = true;
         document.getElementById('resetBtn').disabled = true;
@@ -1807,13 +1839,85 @@ document.addEventListener('DOMContentLoaded', () => {
         ytPlayer?.setVolume(volumeSlider.value);
     });
 
-    document.querySelectorAll('.nav-tabs .tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.nav-tabs .tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(sec => sec.classList.remove('active'));
-            const target = document.getElementById(btn.dataset.target);
-            target?.classList.add('active');
-        });
+    // Fullscreen toggle
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const canvas = document.getElementById('gameCanvas');
+    fullscreenBtn?.addEventListener('click', async () => {
+        try {
+            if (!document.fullscreenElement) {
+                await canvas.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch (e) {}
     });
+
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const effectsBtn = document.getElementById('effectsToggleBtn');
+    const savedTheme = localStorage.getItem('vianeTheme');
+    const savedEffects = localStorage.getItem('vianeReducedEffects');
+    if (savedTheme === 'pastel') {
+        document.body.classList.add('theme-pastel');
+        if (themeBtn) themeBtn.textContent = 'Vibrant Theme';
+    }
+    if (savedEffects === 'true') {
+        document.body.classList.add('reduced-effects');
+        if (effectsBtn) effectsBtn.textContent = 'Full Effects';
+    }
+    themeBtn?.addEventListener('click', () => {
+        document.body.classList.toggle('theme-pastel');
+        const pastel = document.body.classList.contains('theme-pastel');
+        localStorage.setItem('vianeTheme', pastel ? 'pastel' : 'vibrant');
+        themeBtn.textContent = pastel ? 'Vibrant Theme' : 'Pastel Theme';
+    });
+    effectsBtn?.addEventListener('click', () => {
+        document.body.classList.toggle('reduced-effects');
+        const reduced = document.body.classList.contains('reduced-effects');
+        localStorage.setItem('vianeReducedEffects', reduced ? 'true' : 'false');
+        effectsBtn.textContent = reduced ? 'Full Effects' : 'Reduce Effects';
+    });
+
+    // Game over modal actions
+    const playAgainBtn = document.getElementById('playAgainBtn');
+    const shareScoreBtn = document.getElementById('shareScoreBtn');
+    const modal = document.getElementById('gameOverModal');
+    playAgainBtn?.addEventListener('click', () => {
+        if (modal) modal.style.display = 'none';
+        document.getElementById('startBtn')?.click();
+    });
+    shareScoreBtn?.addEventListener('click', async () => {
+        const score = document.getElementById('finalScoreText')?.textContent || '';
+        const level = document.getElementById('finalLevelText')?.textContent || '';
+        const text = `I just played Viane's Love Adventure! ${score}, ${level}. Can you beat me?`;
+        try {
+            await navigator.clipboard.writeText(text);
+            shareScoreBtn.textContent = 'Copied!';
+            setTimeout(() => shareScoreBtn.textContent = 'Share Score', 1500);
+        } catch (_) {}
+    });
+
+    // Mobile controls
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls) {
+        const press = (key) => {
+            document.dispatchEvent(new KeyboardEvent('keydown', { key }));
+        };
+        const release = (key) => {
+            document.dispatchEvent(new KeyboardEvent('keyup', { key }));
+        };
+        const bindBtn = (selector, key) => {
+            const btn = mobileControls.querySelector(selector);
+            if (!btn) return;
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); press(key); }, { passive: false });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); release(key); }, { passive: false });
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); press(key); });
+            btn.addEventListener('mouseup', (e) => { e.preventDefault(); release(key); });
+            btn.addEventListener('mouseleave', (e) => { e.preventDefault(); release(key); });
+        };
+        bindBtn('.up', 'ArrowUp');
+        bindBtn('.down', 'ArrowDown');
+        bindBtn('.left', 'ArrowLeft');
+        bindBtn('.right', 'ArrowRight');
+    }
 });

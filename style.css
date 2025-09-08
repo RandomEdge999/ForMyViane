@@ -6,13 +6,60 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg1: #ff69b4;
+    --bg2: #ff1493;
+    --panel: rgba(255, 105, 180, 0.95);
+    --border: #ff1493;
+    --shadow: #c71585;
+}
+
+.theme-pastel {
+    --bg1: #ffd7e6;
+    --bg2: #f7a4c2;
+    --panel: rgba(255, 215, 230, 0.95);
+    --border: #f28bb5;
+    --shadow: #d16a98;
+}
+
 body {
     font-family: 'Press Start 2P', cursive;
-    background: linear-gradient(135deg, #ff69b4, #ff1493, #ff69b4);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg1));
     color: white;
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
+}
+
+.hud {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: var(--panel);
+    border-bottom: 4px solid var(--border);
+    box-shadow: 0 4px 0 var(--shadow);
+    backdrop-filter: blur(6px);
+}
+
+.hud-left, .hud-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.hud-item {
+    font-size: 0.75em;
+    text-shadow: 1px 1px 0 #c71585;
+}
+
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
 }
 
 /* Animated Background */
@@ -47,11 +94,18 @@ body {
 .pixel-header {
     text-align: center;
     padding: 30px 20px;
-    background: rgba(255, 105, 180, 0.95);
-    border-bottom: 4px solid #ff1493;
-    box-shadow: 0 4px 0 #c71585;
+    background: var(--panel);
+    border-bottom: 4px solid var(--border);
+    box-shadow: 0 4px 0 var(--shadow);
     margin-bottom: 30px;
     position: relative;
+}
+
+.settings-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0 15px 0;
 }
 
 .header-content {
@@ -163,8 +217,8 @@ body {
     background: rgba(255, 105, 180, 0.9);
     padding: 20px;
     border-radius: 15px;
-    border: 4px solid #ff1493;
-    box-shadow: 0 6px 0 #c71585;
+    border: 4px solid var(--border);
+    box-shadow: 0 6px 0 var(--shadow);
     gap: 15px;
 }
 
@@ -172,8 +226,8 @@ body {
     background: rgba(255, 105, 180, 0.95);
     padding: 18px;
     border-radius: 12px;
-    border: 3px solid #ff1493;
-    box-shadow: 0 4px 0 #c71585;
+    border: 3px solid var(--border);
+    box-shadow: 0 4px 0 var(--shadow);
     text-align: center;
     min-width: 160px;
     flex: 1;
@@ -221,19 +275,22 @@ body {
 .canvas-container {
     display: flex;
     justify-content: center;
-    margin: 30px 0;
+    margin: 30px auto;
+    width: 100%;
+    max-width: 900px;
 }
 
 #gameCanvas {
-    border: 5px solid #ff1493;
+    border: 5px solid var(--border);
     border-radius: 15px;
     background: linear-gradient(180deg, #ffb6c1 0%, #ff69b4 50%, #ff1493 100%);
-    box-shadow: 0 10px 0 #c71585, inset 0 0 25px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 0 var(--shadow), inset 0 0 25px rgba(255, 255, 255, 0.3);
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
     width: 100%;
     height: auto;
+    max-width: 800px;
 }
 
 /* Buttons */
@@ -245,6 +302,29 @@ body {
     flex-wrap: wrap;
 }
 
+.mobile-controls {
+    display: none;
+    margin: 10px 0 30px 0;
+    display: grid;
+    grid-template-rows: auto auto;
+    justify-content: center;
+    gap: 8px;
+}
+
+.mobile-controls .middle-row {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 8px;
+}
+
+.mobile-controls .dpad {
+    padding: 12px 16px;
+    border: 3px solid var(--border);
+    background: #ffe4e1;
+    color: #c71585;
+    font-family: 'Press Start 2P', cursive;
+}
+
 .pixel-btn {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.85em;
@@ -253,18 +333,18 @@ body {
     color: white;
     border: none;
     border-radius: 0;
-    border-bottom: 5px solid #c71585;
-    border-right: 5px solid #c71585;
+    border-bottom: 5px solid var(--shadow);
+    border-right: 5px solid var(--shadow);
     cursor: pointer;
     transition: all 0.15s;
     text-transform: uppercase;
-    box-shadow: 0 5px 0 #c71585;
+    box-shadow: 0 5px 0 var(--shadow);
     letter-spacing: 1px;
 }
 
 .pixel-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 0 #c71585;
+    box-shadow: 0 8px 0 var(--shadow);
     background: linear-gradient(45deg, #ff1493, #ff69b4);
 }
 
@@ -862,10 +942,19 @@ body {
 .pixel-footer {
     text-align: center;
     padding: 30px 20px;
-    background: rgba(255, 105, 180, 0.95);
-    border-top: 5px solid #ff1493;
+    background: var(--panel);
+    border-top: 5px solid var(--border);
     margin-top: 50px;
-    box-shadow: 0 -5px 0 #c71585;
+    box-shadow: 0 -5px 0 var(--shadow);
+}
+
+/* Reduced effects mode */
+.reduced-effects .floating-hearts,
+.reduced-effects .cute-sparkles,
+.reduced-effects .love-rain,
+.reduced-effects .pulse-love,
+.reduced-effects .rainbow-text {
+    animation: none !important;
 }
 
 .footer-content {
@@ -972,6 +1061,10 @@ body {
         align-items: center;
         gap: 15px;
     }
+
+    .mobile-controls {
+        display: grid;
+    }
     
     .pixel-btn {
         width: 250px;
@@ -1031,15 +1124,15 @@ body {
 }
 
 .modal-content {
-    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
     margin: 15% auto;
     padding: 30px;
-    border: 4px solid #c71585;
+    border: 4px solid var(--shadow);
     border-radius: 10px;
     width: 80%;
     max-width: 500px;
     text-align: center;
-    box-shadow: 0 8px 0 #c71585;
+    box-shadow: 0 8px 0 var(--shadow);
 }
 
 .modal h2 {
@@ -1071,35 +1164,8 @@ body {
 }
 
 /* Navigation tabs */
-.nav-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-    flex-wrap: wrap;
-}
-
-.nav-tabs .tab {
-    padding: 10px 20px;
-    border: 4px solid #c71585;
-    background: #ffe4e1;
-    color: #c71585;
-    font-family: 'Press Start 2P', cursive;
-    cursor: pointer;
-}
-
-.nav-tabs .tab.active {
-    background: #c71585;
-    color: #ffe4e1;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
+/* removed tabs */
+.tab-content { display: block; }
 
 /* Enhanced music player */
 .player-controls,
