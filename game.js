@@ -160,6 +160,14 @@ class LoveGame {
         this.draw();
         this.gameLoop();
         this.showWelcomeMessage();
+        
+        // Check if AI is loaded
+        if (window.vianeAI) {
+            console.log('Viane AI loaded successfully');
+            console.log('AI Stats:', window.vianeAI.getAIStats());
+        } else {
+            console.warn('Viane AI not loaded - using fallback messages');
+        }
     }
 
     setupEventListeners() {
@@ -217,17 +225,37 @@ class LoveGame {
         });
         
         // Love message controls
-        document.getElementById('loveMessageBtn').addEventListener('click', () => {
+        // Love message buttons
+        const loveMessageBtn = document.getElementById('loveMessageBtn');
+        const generateMessageBtn = document.getElementById('generateMessageBtn');
+        const copyMessageBtn = document.getElementById('copyMessageBtn');
+        
+        if (loveMessageBtn) {
+            loveMessageBtn.addEventListener('click', () => {
+                console.log('Love message button clicked');
             this.generateLoveMessage();
         });
+        } else {
+            console.warn('Love message button not found');
+        }
         
-        document.getElementById('generateMessageBtn').addEventListener('click', () => {
+        if (generateMessageBtn) {
+            generateMessageBtn.addEventListener('click', () => {
+                console.log('Generate message button clicked');
             this.generateLoveMessage();
         });
+        } else {
+            console.warn('Generate message button not found');
+        }
         
-        document.getElementById('copyMessageBtn').addEventListener('click', () => {
+        if (copyMessageBtn) {
+            copyMessageBtn.addEventListener('click', () => {
+                console.log('Copy message button clicked');
             this.copyLoveMessage();
         });
+        } else {
+            console.warn('Copy message button not found');
+        }
         
         // Character customization (optional UI)
         const hairColorEl = document.getElementById('hairColor');
@@ -1390,100 +1418,53 @@ class LoveGame {
     }
     
     async generateLoveMessage() {
+        console.log('generateLoveMessage called');
         const messageElement = document.getElementById('loveMessage');
+        
+        if (!messageElement) {
+            console.error('Love message element not found');
+            return;
+        }
+        
         messageElement.textContent = 'Generating a special love message for Viane... 💕';
         
-        try {
-            // Using OpenAI API for AI-generated love messages
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer sk-proj-your-api-key-here', // Replace with actual API key
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
-                    messages: [
-                        {
-                            role: 'system',
-                            content: 'You are a romantic AI that writes beautiful, heartfelt love messages. Write in a warm, loving tone with emojis.'
-                        },
-                        {
-                            role: 'user',
-                            content: 'Write a unique, romantic love message for someone named Viane. Make it personal, sweet, and include emojis. Keep it under 150 words.'
-                        }
-                    ],
-                    max_tokens: 150,
-                    temperature: 0.8
-                })
-            });
+        // Use our enhanced custom AI model
+        setTimeout(() => {
+            console.log('AI available:', !!window.vianeAI);
             
-            if (response.ok) {
-                const data = await response.json();
-                if (data.choices && data.choices[0] && data.choices[0].message) {
-                    const aiMessage = data.choices[0].message.content.trim();
-                    messageElement.textContent = `Viane, ${aiMessage} 💖`;
-                    return;
-                }
+            if (window.vianeAI) {
+                try {
+                    // Use the best message generation with quality scoring
+                    const customMessage = window.vianeAI.generateBestMessage(3);
+                    console.log('Generated message:', customMessage);
+                    messageElement.textContent = customMessage;
+                    
+                    // Simulate learning from the generated message
+                    const qualityScore = window.vianeAI.scoreMessage(customMessage);
+                    console.log('Message quality score:', qualityScore);
+                    if (qualityScore > 0.7) {
+                        window.vianeAI.learnFromMessage(customMessage, 5);
             }
         } catch (error) {
-            console.log('OpenAI API failed, trying alternative...');
-        }
-        
-        try {
-            // Fallback to Hugging Face API
-            const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer hf_your_token_here',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    inputs: "Write a romantic love message for someone named Viane:",
-                    parameters: {
-                        max_length: 100,
-                        temperature: 0.8,
-                        do_sample: true
-                    }
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data && data[0] && data[0].generated_text) {
-                    messageElement.textContent = `Viane, ${data[0].generated_text} 💖`;
-                    return;
+                    console.error('Error generating AI message:', error);
+                    this.showFallbackMessage(messageElement);
                 }
+            } else {
+                console.log('Using fallback messages');
+                this.showFallbackMessage(messageElement);
             }
-        } catch (error) {
-            console.log('All AI APIs failed, using fallback messages');
-        }
-        
-        // Enhanced fallback messages with more variety and love
-        const loveMessages = [
+        }, 1000 + Math.random() * 1500); // Simulate AI thinking time
+    }
+    
+    showFallbackMessage(messageElement) {
+        const fallbackMessages = [
             `Viane, you are the most beautiful person I've ever known. Every moment with you feels like a dream come true! 💖`,
             `My dearest Viane, your smile lights up my world like nothing else. You are my everything! 💕`,
             `Viane, you are the missing piece to my puzzle. Life is so much better with you in it! 💗`,
             `To my amazing Viane: You make every day feel like Valentine's Day. I love you more than words can express! 💓`,
-            `Viane, you are my sunshine on cloudy days, my comfort in difficult times, and my joy in happy moments! 💝`,
-            `My sweet Viane, you are the reason I believe in love. You are perfect in every way! 💖`,
-            `Viane, every pixel of my heart belongs to you. You are my favorite person in the whole world! 💕`,
-            `To the most wonderful Viane: You are not just my love, you are my best friend, my soulmate, my everything! 💗`,
-            `Viane, your laugh is the most beautiful melody I've ever heard. It makes my heart skip a beat! 💖`,
-            `My precious Viane, you are like a shooting star - rare, beautiful, and magical. I'm so lucky to have you! ✨`,
-            `Viane, you are the reason I wake up with a smile every morning. You make everything better! 🌅`,
-            `To my incredible Viane: You are not just my girlfriend, you are my inspiration, my motivation, my everything! 💕`,
-            `Viane, every day with you is an adventure filled with love, laughter, and pure happiness! 🎈`,
-            `My darling Viane, you are the most precious gift life has given me. I cherish every moment with you! 🎁`,
-            `Viane, you are my safe haven, my happy place, and my greatest love story! 💝`,
-            `To the amazing Viane: You make ordinary moments extraordinary just by being in them! ✨`,
-            `Viane, you are the light that guides me through darkness and the warmth that fills my heart! 🔥`,
-            `My beautiful Viane, you are proof that fairy tales are real and dreams do come true! 🧚‍♀️`,
-            `Viane, every time I see you, my heart does a little dance of joy! You are absolutely perfect! 💃`,
-            `To my sweet Viane: You are the reason I believe in forever. I want to spend eternity with you! ♾️`
+            `Viane, you are my sunshine on cloudy days, my comfort in difficult times, and my joy in happy moments! 💝`
         ];
-        
-        const randomMessage = loveMessages[Math.floor(Math.random() * loveMessages.length)];
+        const randomMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
         messageElement.textContent = randomMessage;
     }
     
@@ -1886,60 +1867,27 @@ class LoveGame {
         if (!welcomeModal || !welcomeMessage) return;
         
         // Show loading message
-        welcomeMessage.textContent = 'Generating a special love message for Viane... 💕';
+        welcomeMessage.textContent = 'Generating a special welcome message... 💕';
         welcomeModal.style.display = 'block';
         
-        try {
-            // Try to generate AI message for welcome
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer sk-proj-your-api-key-here',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
-                    messages: [
-                        {
-                            role: 'system',
-                            content: 'You are a romantic AI that writes beautiful, heartfelt welcome messages for a love game. Write in a warm, loving tone with emojis.'
-                        },
-                        {
-                            role: 'user',
-                            content: 'Write a sweet welcome message for someone playing a love game for Viane. Make it encouraging and romantic. Keep it under 100 words.'
-                        }
-                    ],
-                    max_tokens: 100,
-                    temperature: 0.8
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.choices && data.choices[0] && data.choices[0].message) {
-                    const aiMessage = data.choices[0].message.content.trim();
-                    welcomeMessage.textContent = aiMessage;
-                    return;
-                }
+        // Use custom AI for welcome message
+        setTimeout(() => {
+            if (window.vianeAI) {
+                const customMessage = window.vianeAI.generateMessage();
+                welcomeMessage.textContent = customMessage;
+            } else {
+                // Fallback welcome messages
+                const welcomeMessages = [
+                    "Welcome to this magical love adventure! Every heart you collect brings Viane closer to your heart. 💖",
+                    "Ready to embark on a journey of love? Collect hearts and show Viane how much you care! 💕",
+                    "Step into a world where love conquers all! Let's make Viane's heart skip a beat! 💗",
+                    "Welcome, dear player! Your love story with Viane begins now. Make every moment count! 💓",
+                    "Get ready to spread love and joy! Viane is waiting for your amazing performance! ✨"
+                ];
+                const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+                welcomeMessage.textContent = randomMessage;
             }
-        } catch (error) {
-            console.log('AI API failed for welcome message');
-        }
-        
-        // Fallback welcome messages
-        const welcomeMessages = [
-            "Welcome to this magical love adventure! Every heart you collect brings Viane closer to your heart. 💖",
-            "Ready to embark on a journey of love? Collect hearts and show Viane how much you care! 💕",
-            "Step into a world where love conquers all! Let's make Viane's heart skip a beat! 💗",
-            "Welcome, dear player! Your love story with Viane begins now. Make every moment count! 💓",
-            "Get ready to spread love and joy! Viane is waiting for your amazing performance! ✨",
-            "Welcome to the most romantic game ever! Show Viane your love through every heart you collect! 💝",
-            "Your love adventure starts here! Make Viane proud with every move you make! 🌹",
-            "Welcome to Viane's world! Let your love shine through every heart you gather! 💖"
-        ];
-        
-        const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-        welcomeMessage.textContent = randomMessage;
+        }, 600 + Math.random() * 800);
     }
     
     gameLoop() {
