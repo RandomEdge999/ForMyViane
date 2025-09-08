@@ -1705,17 +1705,34 @@ setInterval(() => {
 }, 2000);
 
 let ytPlayer;
+let progressInterval;
+let playPauseBtn;
+let progressSlider;
+let currentTimeEl;
+let durationEl;
 
 function onYouTubeIframeAPIReady() {
     ytPlayer = new YT.Player('musicPlayerContainer', {
         height: '0',
         width: '0',
         videoId: '',
-        playerVars: { autoplay: 1, controls: 0 },
+        playerVars: { autoplay: 0, controls: 0 },
         events: {
-            onReady: (event) => event.target.setVolume(50)
+            onReady: (event) => event.target.setVolume(50),
+            onStateChange: handlePlayerState
         }
     });
+}
+
+function handlePlayerState(event) {
+    if (event.data === YT.PlayerState.PLAYING) {
+        updateDuration();
+        startProgressUpdater();
+        if (playPauseBtn) playPauseBtn.textContent = '⏸️';
+    } else {
+        clearInterval(progressInterval);
+        if (playPauseBtn) playPauseBtn.textContent = '▶️';
+    }
 }
 
 function extractYouTubeId(url) {
@@ -1724,24 +1741,79 @@ function extractYouTubeId(url) {
     return match ? match[1] : null;
 }
 
+function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+function updateDuration() {
+    const d = ytPlayer.getDuration();
+    if (progressSlider) progressSlider.max = d;
+    if (durationEl) durationEl.textContent = formatTime(d);
+}
+
+function startProgressUpdater() {
+    clearInterval(progressInterval);
+    progressInterval = setInterval(() => {
+        const current = ytPlayer.getCurrentTime();
+        if (progressSlider) progressSlider.value = current;
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(current);
+    }, 500);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const playBtn = document.getElementById('playMusicBtn');
-    const stopBtn = document.getElementById('stopMusicBtn');
     const urlInput = document.getElementById('musicUrl');
+    const loadBtn = document.getElementById('loadMusicBtn');
+    playPauseBtn = document.getElementById('playPauseBtn');
+    const backBtn = document.getElementById('backBtn');
+    const forwardBtn = document.getElementById('forwardBtn');
+    progressSlider = document.getElementById('progressSlider');
+    currentTimeEl = document.getElementById('currentTime');
+    durationEl = document.getElementById('duration');
     const volumeSlider = document.getElementById('volumeSlider');
 
-    playBtn?.addEventListener('click', () => {
+    loadBtn?.addEventListener('click', () => {
         const id = extractYouTubeId(urlInput.value.trim());
         if (id && ytPlayer) {
             ytPlayer.loadVideoById(id);
         }
     });
 
-    stopBtn?.addEventListener('click', () => {
-        ytPlayer?.stopVideo();
+    playPauseBtn?.addEventListener('click', () => {
+        const state = ytPlayer?.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+            ytPlayer.pauseVideo();
+        } else {
+            ytPlayer.playVideo();
+        }
+    });
+
+    backBtn?.addEventListener('click', () => {
+        const t = ytPlayer?.getCurrentTime() || 0;
+        ytPlayer?.seekTo(Math.max(0, t - 10), true);
+    });
+
+    forwardBtn?.addEventListener('click', () => {
+        const t = ytPlayer?.getCurrentTime() || 0;
+        ytPlayer?.seekTo(Math.min(ytPlayer.getDuration(), t + 10), true);
+    });
+
+    progressSlider?.addEventListener('input', () => {
+        ytPlayer?.seekTo(progressSlider.value, true);
     });
 
     volumeSlider?.addEventListener('input', () => {
         ytPlayer?.setVolume(volumeSlider.value);
+    });
+
+    document.querySelectorAll('.nav-tabs .tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.nav-tabs .tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById(btn.dataset.target);
+            target?.classList.add('active');
+        });
     });
 });
