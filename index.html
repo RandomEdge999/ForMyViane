@@ -78,14 +78,6 @@
             <button id="fullscreenBtn" class="pixel-btn">FULLSCREEN</button>
         </div>
 
-        <div class="mobile-controls" id="mobileControls">
-            <button class="dpad up" aria-label="Up">▲</button>
-            <div class="middle-row">
-                <button class="dpad left" aria-label="Left">◀</button>
-                <button class="dpad down" aria-label="Down">▼</button>
-                <button class="dpad right" aria-label="Right">▶</button>
-            </div>
-        </div>
 
         <div class="sound-player">
             <h3>🔊 Sound Effects 🔊</h3>
@@ -217,6 +209,16 @@
             <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <button id="playAgainBtn" class="pixel-btn primary-btn">Play Again</button>
                 <button id="shareScoreBtn" class="pixel-btn">Share Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <h2>💖 Welcome to Viane's Love Adventure 💖</h2>
+            <p id="welcomeMessage">Loading a special message for you...</p>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button id="closeWelcomeBtn" class="pixel-btn primary-btn">Start Playing</button>
             </div>
         </div>
     </div>

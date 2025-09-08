@@ -302,28 +302,6 @@ main {
     flex-wrap: wrap;
 }
 
-.mobile-controls {
-    display: none;
-    margin: 10px 0 30px 0;
-    display: grid;
-    grid-template-rows: auto auto;
-    justify-content: center;
-    gap: 8px;
-}
-
-.mobile-controls .middle-row {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    gap: 8px;
-}
-
-.mobile-controls .dpad {
-    padding: 12px 16px;
-    border: 3px solid var(--border);
-    background: #ffe4e1;
-    color: #c71585;
-    font-family: 'Press Start 2P', cursive;
-}
 
 .pixel-btn {
     font-family: 'Press Start 2P', cursive;
@@ -623,7 +601,7 @@ main {
 
 .instructions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
 }
 
@@ -1031,6 +1009,12 @@ main {
     }
 }
 
+@media (max-width: 1024px) {
+    .instructions-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .title {
         font-size: 2em;
@@ -1062,9 +1046,6 @@ main {
         gap: 15px;
     }
 
-    .mobile-controls {
-        display: grid;
-    }
     
     .pixel-btn {
         width: 250px;
@@ -1073,7 +1054,7 @@ main {
     }
     
     .instructions-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .power-up-grid {
@@ -1108,6 +1089,10 @@ main {
     .message-controls {
         flex-direction: column;
         align-items: center;
+    }
+    
+    .instructions-grid {
+        grid-template-columns: 1fr;
     }
 }
 

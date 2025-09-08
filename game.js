@@ -69,7 +69,7 @@ class LoveGame {
         
         this.selectedCharacter = 'viane';
         
-        // Player (Pixel Art Girl)
+        // Player (Sprite-based Heroine)
         this.player = {
             x: this.canvas.width / 2,
             y: this.canvas.height - 80,
@@ -82,7 +82,9 @@ class LoveGame {
             isInvincible: false,
             hasMultiplier: false,
             multiplierTimer: 0,
-            invincibleTimer: 0
+            invincibleTimer: 0,
+            sprite: null,
+            spriteLoaded: false
         };
         
         // Game objects
@@ -94,6 +96,10 @@ class LoveGame {
         this.rainbowTrail = [];
         this.screenShake = 0;
         this.specialEffects = [];
+        
+        // Obstacle properties
+        this.obstacleTypes = ['basic', 'fast', 'heavy', 'zigzag'];
+        this.obstacleCount = 0;
         
         // Game settings
         this.heartSpawnRate = 60;
@@ -146,12 +152,14 @@ class LoveGame {
         this.setupEventListeners();
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
+        this.loadSprite();
         this.loadPixelArt();
         this.createPixelPatterns();
         this.checkCharacterUnlocks();
         this.updateUI();
         this.draw();
         this.gameLoop();
+        this.showWelcomeMessage();
     }
 
     setupEventListeners() {
@@ -243,6 +251,51 @@ class LoveGame {
             this.selectedCharacter = e.target.value;
             this.playerPattern = this.characterPatterns[this.selectedCharacter];
         });
+    }
+    
+    loadSprite() {
+        // Create a simple pixel art sprite for the heroine
+        this.player.sprite = this.createHeroineSprite();
+        this.player.spriteLoaded = true;
+    }
+    
+    createHeroineSprite() {
+        // Create a 16x16 pixel art heroine sprite
+        const canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        const ctx = canvas.getContext('2d');
+        
+        // Hair (brown)
+        ctx.fillStyle = this.player.hairColor;
+        ctx.fillRect(2, 1, 12, 6);
+        ctx.fillRect(1, 2, 14, 4);
+        
+        // Face (skin tone)
+        ctx.fillStyle = '#FFE4E1';
+        ctx.fillRect(4, 3, 8, 6);
+        
+        // Eyes
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(5, 5, 1, 1);
+        ctx.fillRect(10, 5, 1, 1);
+        
+        // Blush
+        ctx.fillStyle = '#FF69B4';
+        ctx.fillRect(3, 6, 1, 1);
+        ctx.fillRect(12, 6, 1, 1);
+        
+        // Dress (pink)
+        ctx.fillStyle = this.player.dressColor;
+        ctx.fillRect(3, 8, 10, 8);
+        ctx.fillRect(2, 9, 12, 6);
+        
+        // Arms
+        ctx.fillStyle = '#FFE4E1';
+        ctx.fillRect(1, 9, 2, 4);
+        ctx.fillRect(13, 9, 2, 4);
+        
+        return canvas;
     }
     
     loadPixelArt() {
@@ -503,25 +556,19 @@ class LoveGame {
     }
     
     drawGirlCharacter(x, y) {
+        // Draw sprite-based heroine
+        if (this.player.spriteLoaded && this.player.sprite) {
+            this.ctx.drawImage(this.player.sprite, x, y, this.player.width, this.player.height);
+        } else {
+            // Fallback to pixel pattern
         const size = 2.5;
-        
-        // Get the current character pattern
         const characterPattern = this.characterPatterns[this.selectedCharacter];
-        
-        // Draw dress (body)
         this.drawPixelSprite(characterPattern, x, y, size, this.player.dressColor);
-        
-        // Draw hair
         this.drawHair(x, y, size, characterPattern);
-        
-        // Draw face
         this.drawFace(x, y, size);
-        
-        // Draw accessory
         this.drawAccessory(x, y, size);
-        
-        // Draw character-specific effects
         this.drawCharacterEffects(x, y, size);
+        }
         
         // Draw effects
         if (this.player.isInvincible) {
@@ -737,13 +784,20 @@ class LoveGame {
         this.score = 0;
         this.lives = 3;
         this.level = 1;
+        this.difficulty = 1;
+        this.obstacleCount = 0;
         this.hearts = [];
         this.obstacles = [];
         this.powerUps = [];
         this.particles = [];
         this.sparkles = [];
         this.rainbowTrail = [];
-        this.difficulty = 1;
+        
+        // Reset spawn rates
+        this.heartSpawnRate = 60;
+        this.obstacleSpawnRate = 120;
+        this.powerUpSpawnRate = 300;
+        
         this.updateUI();
         document.getElementById('startBtn').disabled = true;
         document.getElementById('pauseBtn').disabled = false;
@@ -765,13 +819,20 @@ class LoveGame {
         this.score = 0;
         this.lives = 3;
         this.level = 1;
+        this.difficulty = 1;
+        this.obstacleCount = 0;
         this.hearts = [];
         this.obstacles = [];
         this.powerUps = [];
         this.particles = [];
         this.sparkles = [];
         this.rainbowTrail = [];
-        this.difficulty = 1;
+        
+        // Reset spawn rates
+        this.heartSpawnRate = 60;
+        this.obstacleSpawnRate = 120;
+        this.powerUpSpawnRate = 300;
+        
         this.updateUI();
         this.draw();
         document.getElementById('startBtn').disabled = false;
@@ -832,8 +893,26 @@ class LoveGame {
     updateObstacles() {
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
             const obstacle = this.obstacles[i];
-            obstacle.y += obstacle.speed;
             
+            // Smooth movement based on obstacle type
+            switch (obstacle.type) {
+                case 'basic':
+            obstacle.y += obstacle.speed;
+                    break;
+                case 'fast':
+                    obstacle.y += obstacle.speed * 1.5;
+                    break;
+                case 'heavy':
+                    obstacle.y += obstacle.speed * 0.8;
+                    break;
+                case 'zigzag':
+                    obstacle.y += obstacle.speed;
+                    obstacle.x += Math.sin(obstacle.y * 0.1) * 2; // Smooth sine wave
+                    obstacle.x = Math.max(0, Math.min(this.canvas.width - obstacle.width, obstacle.x));
+                    break;
+            }
+            
+            // Remove obstacles that are off screen
             if (obstacle.y > this.canvas.height + 50) {
                 this.obstacles.splice(i, 1);
             }
@@ -1143,11 +1222,19 @@ class LoveGame {
             this.heartSpawnTimer = 0;
         }
         
-        // Spawn obstacles
+        // Spawn obstacles - more frequent spawning
         this.obstacleSpawnTimer++;
         if (this.obstacleSpawnTimer >= this.obstacleSpawnRate) {
             this.spawnObstacle();
             this.obstacleSpawnTimer = 0;
+            
+            // Chance to spawn multiple obstacles at higher levels
+            if (this.level >= 3 && Math.random() < 0.3) {
+                setTimeout(() => this.spawnObstacle(), 200);
+            }
+            if (this.level >= 5 && Math.random() < 0.2) {
+                setTimeout(() => this.spawnObstacle(), 400);
+            }
         }
         
         // Spawn power-ups
@@ -1172,15 +1259,40 @@ class LoveGame {
     }
     
     spawnObstacle() {
+        this.obstacleCount++;
+        
+        // Determine obstacle type based on level with better distribution
+        let obstacleType = 'basic';
+        const rand = Math.random();
+        
+        if (this.level >= 2 && rand < 0.4) obstacleType = 'fast';
+        else if (this.level >= 3 && rand < 0.6) obstacleType = 'heavy';
+        else if (this.level >= 4 && rand < 0.8) obstacleType = 'zigzag';
+        
+        // Base speed increases linearly with level
+        const baseSpeed = 2 + (this.level * 0.3);
+        
         const obstacle = {
             x: Math.random() * (this.canvas.width - 40),
             y: -40,
             width: 40,
             height: 40,
-            speed: 3 + Math.random() * 2,
-            color: '#8b0000'
+            speed: baseSpeed + Math.random() * 0.5, // Less random variation
+            type: obstacleType,
+            color: this.getObstacleColor(obstacleType)
         };
+        
         this.obstacles.push(obstacle);
+    }
+    
+    getObstacleColor(type) {
+        switch (type) {
+            case 'basic': return '#8b0000';
+            case 'fast': return '#ff4500';
+            case 'heavy': return '#2f4f4f';
+            case 'zigzag': return '#8b008b';
+            default: return '#8b0000';
+        }
     }
     
     spawnPowerUp() {
@@ -1207,12 +1319,18 @@ class LoveGame {
     }
     
     updateDifficulty() {
-        // Increase difficulty over time
-        if (this.score > 0 && this.score % 100 === 0) {
-            this.difficulty += 0.1;
-            this.level = Math.floor(this.difficulty) + 1;
-            this.heartSpawnRate = Math.max(30, 60 - this.difficulty * 10);
-            this.obstacleSpawnRate = Math.max(60, 120 - this.difficulty * 15);
+        // Linear difficulty progression
+        const newLevel = Math.floor(this.score / 200) + 1;
+        if (newLevel > this.level) {
+            this.level = newLevel;
+            this.difficulty = this.level;
+            
+            // Increase obstacle spawn rate linearly
+            this.obstacleSpawnRate = Math.max(40, 120 - (this.level * 8));
+            
+            // Increase heart spawn rate slightly
+            this.heartSpawnRate = Math.max(45, 60 - (this.level * 2));
+            
             this.updateUI();
         }
     }
@@ -1276,11 +1394,48 @@ class LoveGame {
         messageElement.textContent = 'Generating a special love message for Viane... 💕';
         
         try {
-            // Using Hugging Face's free inference API for AI-generated love messages
+            // Using OpenAI API for AI-generated love messages
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer sk-proj-your-api-key-here', // Replace with actual API key
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are a romantic AI that writes beautiful, heartfelt love messages. Write in a warm, loving tone with emojis.'
+                        },
+                        {
+                            role: 'user',
+                            content: 'Write a unique, romantic love message for someone named Viane. Make it personal, sweet, and include emojis. Keep it under 150 words.'
+                        }
+                    ],
+                    max_tokens: 150,
+                    temperature: 0.8
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    const aiMessage = data.choices[0].message.content.trim();
+                    messageElement.textContent = `Viane, ${aiMessage} 💖`;
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log('OpenAI API failed, trying alternative...');
+        }
+        
+        try {
+            // Fallback to Hugging Face API
             const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer hf_your_token_here', // This would need a real token
+                    'Authorization': 'Bearer hf_your_token_here',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
@@ -1301,7 +1456,7 @@ class LoveGame {
                 }
             }
         } catch (error) {
-            console.log('AI API failed, using fallback messages');
+            console.log('All AI APIs failed, using fallback messages');
         }
         
         // Enhanced fallback messages with more variety and love
@@ -1433,13 +1588,42 @@ class LoveGame {
     
     drawObstacles() {
         this.obstacles.forEach(obstacle => {
-            this.drawPixelSprite(
-                this.obstaclePattern,
-                obstacle.x,
-                obstacle.y,
-                5,
-                obstacle.color
-            );
+            this.ctx.save();
+            
+            // Draw different shapes based on obstacle type
+            switch (obstacle.type) {
+                case 'basic':
+                    this.drawPixelSprite(this.obstaclePattern, obstacle.x, obstacle.y, 5, obstacle.color);
+                    break;
+                case 'fast':
+                    // Diamond shape for fast obstacles
+                    this.ctx.fillStyle = obstacle.color;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(obstacle.x + obstacle.width/2, obstacle.y);
+                    this.ctx.lineTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height/2);
+                    this.ctx.lineTo(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height);
+                    this.ctx.lineTo(obstacle.x, obstacle.y + obstacle.height/2);
+                    this.ctx.closePath();
+                    this.ctx.fill();
+                    break;
+                case 'heavy':
+                    // Square with border for heavy obstacles
+                    this.ctx.fillStyle = obstacle.color;
+                    this.ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                    this.ctx.strokeStyle = '#000000';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                    break;
+                case 'zigzag':
+                    // Circle for zigzag obstacles
+                    this.ctx.fillStyle = obstacle.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, obstacle.width/2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    break;
+            }
+            
+            this.ctx.restore();
         });
     }
     
@@ -1567,8 +1751,8 @@ class LoveGame {
 
         // Update character selection dropdown and unlocks only if UI exists
         if (document.getElementById('characterSelect')) {
-            this.updateCharacterSelection();
-            this.checkCharacterUnlocks();
+        this.updateCharacterSelection();
+        this.checkCharacterUnlocks();
         }
         
         // Update high score
@@ -1693,6 +1877,69 @@ class LoveGame {
                 );
             }, i * 100);
         }
+    }
+    
+    async showWelcomeMessage() {
+        const welcomeModal = document.getElementById('welcomeModal');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        
+        if (!welcomeModal || !welcomeMessage) return;
+        
+        // Show loading message
+        welcomeMessage.textContent = 'Generating a special love message for Viane... 💕';
+        welcomeModal.style.display = 'block';
+        
+        try {
+            // Try to generate AI message for welcome
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer sk-proj-your-api-key-here',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are a romantic AI that writes beautiful, heartfelt welcome messages for a love game. Write in a warm, loving tone with emojis.'
+                        },
+                        {
+                            role: 'user',
+                            content: 'Write a sweet welcome message for someone playing a love game for Viane. Make it encouraging and romantic. Keep it under 100 words.'
+                        }
+                    ],
+                    max_tokens: 100,
+                    temperature: 0.8
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    const aiMessage = data.choices[0].message.content.trim();
+                    welcomeMessage.textContent = aiMessage;
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log('AI API failed for welcome message');
+        }
+        
+        // Fallback welcome messages
+        const welcomeMessages = [
+            "Welcome to this magical love adventure! Every heart you collect brings Viane closer to your heart. 💖",
+            "Ready to embark on a journey of love? Collect hearts and show Viane how much you care! 💕",
+            "Step into a world where love conquers all! Let's make Viane's heart skip a beat! 💗",
+            "Welcome, dear player! Your love story with Viane begins now. Make every moment count! 💓",
+            "Get ready to spread love and joy! Viane is waiting for your amazing performance! ✨",
+            "Welcome to the most romantic game ever! Show Viane your love through every heart you collect! 💝",
+            "Your love adventure starts here! Make Viane proud with every move you make! 🌹",
+            "Welcome to Viane's world! Let your love shine through every heart you gather! 💖"
+        ];
+        
+        const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+        welcomeMessage.textContent = randomMessage;
     }
     
     gameLoop() {
@@ -1897,27 +2144,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
     });
 
-    // Mobile controls
-    const mobileControls = document.getElementById('mobileControls');
-    if (mobileControls) {
-        const press = (key) => {
-            document.dispatchEvent(new KeyboardEvent('keydown', { key }));
-        };
-        const release = (key) => {
-            document.dispatchEvent(new KeyboardEvent('keyup', { key }));
-        };
-        const bindBtn = (selector, key) => {
-            const btn = mobileControls.querySelector(selector);
-            if (!btn) return;
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); press(key); }, { passive: false });
-            btn.addEventListener('touchend', (e) => { e.preventDefault(); release(key); }, { passive: false });
-            btn.addEventListener('mousedown', (e) => { e.preventDefault(); press(key); });
-            btn.addEventListener('mouseup', (e) => { e.preventDefault(); release(key); });
-            btn.addEventListener('mouseleave', (e) => { e.preventDefault(); release(key); });
-        };
-        bindBtn('.up', 'ArrowUp');
-        bindBtn('.down', 'ArrowDown');
-        bindBtn('.left', 'ArrowLeft');
-        bindBtn('.right', 'ArrowRight');
-    }
+    // Welcome modal actions
+    const closeWelcomeBtn = document.getElementById('closeWelcomeBtn');
+    const welcomeModal = document.getElementById('welcomeModal');
+    closeWelcomeBtn?.addEventListener('click', () => {
+        if (welcomeModal) welcomeModal.style.display = 'none';
+    });
+    
+    // Auto-close welcome modal after 10 seconds
+    setTimeout(() => {
+        if (welcomeModal && welcomeModal.style.display === 'block') {
+            welcomeModal.style.display = 'none';
+        }
+    }, 10000);
+
 });
