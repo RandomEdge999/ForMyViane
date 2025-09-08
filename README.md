@@ -54,7 +54,7 @@ No server setup required - it's a pure client-side application\!
 ## 📁 File Structure
 
 ```
-Mira_web/
+Viane_web/
 ├── index.html          # Main HTML file
 ├── style.css           # CSS styling and animations
 ├── game.js             # Game logic and mechanics
