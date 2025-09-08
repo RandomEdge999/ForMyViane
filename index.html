@@ -26,8 +26,18 @@
         </div>
     </header>
 
-    <main class="game-container">
-        <div class="game-info">
+    <nav class="nav-tabs">
+        <button class="tab active" data-target="gameSection">Game</button>
+        <button class="tab" data-target="loveMessages">Messages</button>
+        <button class="tab" data-target="characterCustomization">Customize</button>
+        <button class="tab" data-target="powerUps">Power-Ups</button>
+        <button class="tab" data-target="loveStats">Stats</button>
+        <button class="tab" data-target="romanticQuotes">Quotes</button>
+    </nav>
+
+    <main>
+        <div id="gameSection" class="tab-content active">
+            <div class="game-info">
             <div class="score-board">
                 <span class="score-label">LOVE SCORE:</span>
                 <span id="score">0</span>
@@ -74,8 +84,17 @@
             <h3>🎵 Background Music 🎵</h3>
             <div class="music-controls">
                 <input id="musicUrl" type="text" class="pixel-input" placeholder="Paste YouTube link">
-                <button id="playMusicBtn" class="pixel-btn-small">Play</button>
-                <button id="stopMusicBtn" class="pixel-btn-small">Stop</button>
+                <button id="loadMusicBtn" class="pixel-btn-small">Load</button>
+            </div>
+            <div class="player-controls">
+                <button id="backBtn" class="pixel-btn-small">⏮️</button>
+                <button id="playPauseBtn" class="pixel-btn-small">▶️</button>
+                <button id="forwardBtn" class="pixel-btn-small">⏭️</button>
+            </div>
+            <div class="progress-container">
+                <span id="currentTime" class="time-display">0:00</span>
+                <input id="progressSlider" type="range" min="0" max="0" value="0">
+                <span id="duration" class="time-display">0:00</span>
             </div>
             <div class="volume-control">
                 <label for="volumeSlider">Volume:</label>
@@ -84,22 +103,47 @@
             <div id="musicPlayerContainer"></div>
         </div>
 
-        <div class="content-sections">
-            <div class="section-grid">
-                <div class="love-message-section">
-                    <div class="message-box">
-                        <h3>💖 Love Messages for Viane 💖</h3>
-                        <div id="loveMessage" class="love-text">
-                            Click the button above to generate a special love message for Viane! 💕
-                        </div>
-                        <div class="message-controls">
-                            <button id="generateMessageBtn" class="pixel-btn-small">Generate New Message</button>
-                            <button id="copyMessageBtn" class="pixel-btn-small">Copy Message</button>
-                        </div>
-                    </div>
+        <div class="instructions">
+            <h3>🎮 HOW TO PLAY:</h3>
+            <div class="instructions-grid">
+                <div class="instruction-item">
+                    <span class="instruction-icon">⬆️⬇️⬅️➡️</span>
+                    <p>Use ARROW KEYS to move your character</p>
                 </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">💖</span>
+                    <p>Collect floating hearts for points!</p>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">⚠️</span>
+                    <p>Avoid the falling obstacles</p>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">⭐</span>
+                    <p>Get power-ups for special abilities!</p>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">🏆</span>
+                    <p>Get the highest love score! 💕</p>
+                </div>
+            </div>
+        </div>
+        </div>
 
-                <div class="character-customization">
+        <div id="loveMessages" class="love-message-section tab-content">
+            <div class="message-box">
+                <h3>💖 Love Messages for Viane 💖</h3>
+                <div id="loveMessage" class="love-text">
+                    Click the button above to generate a special love message for Viane! 💕
+                </div>
+                <div class="message-controls">
+                    <button id="generateMessageBtn" class="pixel-btn-small">Generate New Message</button>
+                    <button id="copyMessageBtn" class="pixel-btn-small">Copy Message</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="characterCustomization" class="character-customization tab-content">
                     <h3>🎀 Customize Your Character 🎀</h3>
                     <div class="character-options">
                         <div class="option-group">
@@ -140,35 +184,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+        </div>
 
-            <div class="instructions">
-                <h3>🎮 HOW TO PLAY:</h3>
-                <div class="instructions-grid">
-                    <div class="instruction-item">
-                        <span class="instruction-icon">⬆️⬇️⬅️➡️</span>
-                        <p>Use ARROW KEYS to move your character</p>
-                    </div>
-                    <div class="instruction-item">
-                        <span class="instruction-icon">💖</span>
-                        <p>Collect floating hearts for points!</p>
-                    </div>
-                    <div class="instruction-item">
-                        <span class="instruction-icon">⚠️</span>
-                        <p>Avoid the falling obstacles</p>
-                    </div>
-                    <div class="instruction-item">
-                        <span class="instruction-icon">⭐</span>
-                        <p>Get power-ups for special abilities!</p>
-                    </div>
-                    <div class="instruction-item">
-                        <span class="instruction-icon">🏆</span>
-                        <p>Get the highest love score! 💕</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="power-ups-info">
+        <div id="powerUps" class="power-ups-info tab-content">
                 <h3>🌟 POWER-UPS 🌟</h3>
                 <div class="power-up-grid">
                     <div class="power-up-item">
@@ -202,55 +220,54 @@
                 </div>
             </div>
 
-            <div class="love-stats">
-                <h3>💕 LOVE STATISTICS 💕</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-icon">💖</div>
-                        <div class="stat-details">
-                            <span class="stat-name">Hearts Collected</span>
-                            <span class="stat-value" id="heartsCollected">0</span>
-                        </div>
+        <div id="loveStats" class="love-stats tab-content">
+            <h3>💕 LOVE STATISTICS 💕</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">💖</div>
+                    <div class="stat-details">
+                        <span class="stat-name">Hearts Collected</span>
+                        <span class="stat-value" id="heartsCollected">0</span>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">💕</div>
-                        <div class="stat-details">
-                            <span class="stat-name">Love Level</span>
-                            <span class="stat-value" id="loveLevel">1</span>
-                        </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">💕</div>
+                    <div class="stat-details">
+                        <span class="stat-name">Love Level</span>
+                        <span class="stat-value" id="loveLevel">1</span>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">💗</div>
-                        <div class="stat-details">
-                            <span class="stat-name">Perfect Days</span>
-                            <span class="stat-value" id="perfectDays">0</span>
-                        </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">💗</div>
+                    <div class="stat-details">
+                        <span class="stat-name">Perfect Days</span>
+                        <span class="stat-value" id="perfectDays">0</span>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">💓</div>
-                        <div class="stat-details">
-                            <span class="stat-name">Viane's Happiness</span>
-                            <span class="stat-value" id="vianeHappiness">100%</span>
-                        </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">💓</div>
+                    <div class="stat-details">
+                        <span class="stat-name">Viane's Happiness</span>
+                        <span class="stat-value" id="vianeHappiness">100%</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="romantic-quotes">
-                <h3>💝 ROMANTIC QUOTES FOR VIANE 💝</h3>
-                <div class="quotes-container">
-                    <div class="quote-item">
-                        <p class="quote-text">"Viane, you are my sunshine on a cloudy day!" ☀️</p>
-                    </div>
-                    <div class="quote-item">
-                        <p class="quote-text">"Every moment with you is a treasure, Viane!" 💎</p>
-                    </div>
-                    <div class="quote-item">
-                        <p class="quote-text">"Viane, you make my heart skip a beat!" 💓</p>
-                    </div>
-                    <div class="quote-item">
-                        <p class="quote-text">"You are the most beautiful person I know, Viane!" 🌹</p>
-                    </div>
+        <div id="romanticQuotes" class="romantic-quotes tab-content">
+            <h3>💝 ROMANTIC QUOTES FOR VIANE 💝</h3>
+            <div class="quotes-container">
+                <div class="quote-item">
+                    <p class="quote-text">"Viane, you are my sunshine on a cloudy day!" ☀️</p>
+                </div>
+                <div class="quote-item">
+                    <p class="quote-text">"Every moment with you is a treasure, Viane!" 💎</p>
+                </div>
+                <div class="quote-item">
+                    <p class="quote-text">"Viane, you make my heart skip a beat!" 💓</p>
+                </div>
+                <div class="quote-item">
+                    <p class="quote-text">"You are the most beautiful person I know, Viane!" 🌹</p>
                 </div>
             </div>
         </div>
