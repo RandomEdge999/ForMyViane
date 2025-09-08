@@ -9,7 +9,7 @@ class LoveGame {
         this.level = 1;
         this.gameRunning = false;
         this.gamePaused = false;
-        this.highScore = localStorage.getItem('vianeHighScore') || 0;
+        this.highScore = getStoredHighScore();
 
         // Sound settings
         this.soundVolume = 0.5;
