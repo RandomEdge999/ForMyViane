@@ -232,6 +232,8 @@ body {
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+    width: 100%;
+    height: auto;
 }
 
 /* Buttons */
@@ -388,6 +390,79 @@ body {
 .pixel-btn-small:active {
     transform: translateY(1px);
     box-shadow: 0 2px 0 #c71585;
+}
+
+.pixel-btn:disabled,
+.pixel-btn-small:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Music Player */
+.music-player {
+    margin: 40px auto;
+    text-align: center;
+    max-width: 500px;
+}
+
+.music-player h3 {
+    margin-bottom: 15px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #c71585;
+}
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.pixel-input {
+    padding: 10px;
+    border: 4px solid #c71585;
+    background: #ffe4e1;
+    color: #c71585;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7em;
+    width: 260px;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#volumeSlider {
+    width: 200px;
+}
+
+/* Sound effects controls */
+.sound-player {
+    margin: 40px auto;
+    text-align: center;
+    max-width: 500px;
+}
+
+.sound-player h3 {
+    margin-bottom: 15px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #c71585;
+}
+
+.sound-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#soundSlider {
+    width: 200px;
 }
 
 /* Character Customization */

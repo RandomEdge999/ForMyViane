@@ -10,6 +10,10 @@ class LoveGame {
         this.gameRunning = false;
         this.gamePaused = false;
         this.highScore = localStorage.getItem('vianeHighScore') || 0;
+
+        // Sound settings
+        this.soundVolume = 0.5;
+        this.muted = false;
         
         // Love statistics
         this.heartsCollected = 0;
@@ -113,10 +117,10 @@ class LoveGame {
             levelUp: this.createSound(600, 0.3, 'triangle'),
             gameOver: this.createSound(200, 0.5, 'sawtooth')
         };
-        
+
         this.init();
     }
-    
+
     createSound(frequency, duration, type = 'sine') {
         return () => {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -129,8 +133,9 @@ class LoveGame {
             oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
             oscillator.type = type;
             
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            const volume = this.muted ? 0 : this.soundVolume;
+            gainNode.gain.setValueAtTime(0.1 * volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01 * volume, audioContext.currentTime + duration);
             
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + duration);
@@ -139,6 +144,8 @@ class LoveGame {
     
     init() {
         this.setupEventListeners();
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
         this.loadPixelArt();
         this.createPixelPatterns();
         this.checkCharacterUnlocks();
@@ -146,7 +153,7 @@ class LoveGame {
         this.draw();
         this.gameLoop();
     }
-    
+
     setupEventListeners() {
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
@@ -162,16 +169,43 @@ class LoveGame {
         });
         
         // Game controls
-        document.getElementById('startBtn').addEventListener('click', () => {
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        startBtn.addEventListener('click', () => {
             this.startGame();
         });
-        
-        document.getElementById('pauseBtn').addEventListener('click', () => {
+
+        pauseBtn.addEventListener('click', () => {
             this.togglePause();
         });
-        
-        document.getElementById('resetBtn').addEventListener('click', () => {
+
+        resetBtn.addEventListener('click', () => {
             this.resetGame();
+        });
+
+        pauseBtn.disabled = true;
+        resetBtn.disabled = true;
+
+        // Sound controls
+        const soundSlider = document.getElementById('soundSlider');
+        const muteBtn = document.getElementById('muteSoundBtn');
+
+        soundSlider?.addEventListener('input', (e) => {
+            this.soundVolume = e.target.value / 100;
+            if (this.soundVolume > 0) {
+                this.muted = false;
+                muteBtn.textContent = 'Mute';
+            } else {
+                this.muted = true;
+                muteBtn.textContent = 'Unmute';
+            }
+        });
+
+        muteBtn?.addEventListener('click', () => {
+            this.muted = !this.muted;
+            muteBtn.textContent = this.muted ? 'Unmute' : 'Mute';
         });
         
         // Love message controls
@@ -707,11 +741,17 @@ class LoveGame {
         this.rainbowTrail = [];
         this.difficulty = 1;
         this.updateUI();
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('pauseBtn').disabled = false;
+        document.getElementById('resetBtn').disabled = false;
+        document.getElementById('pauseBtn').textContent = 'PAUSE';
     }
-    
+
     togglePause() {
         if (this.gameRunning) {
             this.gamePaused = !this.gamePaused;
+            const pauseBtn = document.getElementById('pauseBtn');
+            pauseBtn.textContent = this.gamePaused ? 'RESUME' : 'PAUSE';
         }
     }
     
@@ -730,6 +770,10 @@ class LoveGame {
         this.difficulty = 1;
         this.updateUI();
         this.draw();
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('pauseBtn').disabled = true;
+        document.getElementById('resetBtn').disabled = true;
+        document.getElementById('pauseBtn').textContent = 'PAUSE';
     }
     
     update() {
@@ -1601,6 +1645,10 @@ class LoveGame {
     gameOver() {
         this.gameRunning = false;
         this.showGameOverMessage();
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('pauseBtn').disabled = true;
+        document.getElementById('resetBtn').disabled = true;
+        document.getElementById('pauseBtn').textContent = 'PAUSE';
     }
     
     showGameOverMessage() {
@@ -1619,6 +1667,19 @@ class LoveGame {
         this.update();
         this.draw();
         requestAnimationFrame(() => this.gameLoop());
+    }
+
+    resizeCanvas() {
+        const prevWidth = this.canvas.width;
+        const prevHeight = this.canvas.height;
+        const width = Math.min(800, window.innerWidth - 40);
+        const height = width * 0.75;
+        this.canvas.width = width;
+        this.canvas.height = height;
+        if (prevWidth && prevHeight) {
+            this.player.x = this.player.x * (width / prevWidth);
+            this.player.y = this.player.y * (height / prevHeight);
+        }
     }
 }
 
@@ -1642,3 +1703,45 @@ setInterval(() => {
         }, 6000);
     }
 }, 2000);
+
+let ytPlayer;
+
+function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('musicPlayerContainer', {
+        height: '0',
+        width: '0',
+        videoId: '',
+        playerVars: { autoplay: 1, controls: 0 },
+        events: {
+            onReady: (event) => event.target.setVolume(50)
+        }
+    });
+}
+
+function extractYouTubeId(url) {
+    const regex = /(?:youtube\.com\/(?:[^\n\/]+\/\S\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([\w-]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const playBtn = document.getElementById('playMusicBtn');
+    const stopBtn = document.getElementById('stopMusicBtn');
+    const urlInput = document.getElementById('musicUrl');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    playBtn?.addEventListener('click', () => {
+        const id = extractYouTubeId(urlInput.value.trim());
+        if (id && ytPlayer) {
+            ytPlayer.loadVideoById(id);
+        }
+    });
+
+    stopBtn?.addEventListener('click', () => {
+        ytPlayer?.stopVideo();
+    });
+
+    volumeSlider?.addEventListener('input', () => {
+        ytPlayer?.setVolume(volumeSlider.value);
+    });
+});

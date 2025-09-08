@@ -61,6 +61,29 @@
             <button id="loveMessageBtn" class="pixel-btn special-btn">💕 LOVE MESSAGE 💕</button>
         </div>
 
+        <div class="sound-player">
+            <h3>🔊 Sound Effects 🔊</h3>
+            <div class="sound-controls">
+                <label for="soundSlider">Volume:</label>
+                <input id="soundSlider" type="range" min="0" max="100" value="50">
+                <button id="muteSoundBtn" class="pixel-btn-small">Mute</button>
+            </div>
+        </div>
+
+        <div class="music-player">
+            <h3>🎵 Background Music 🎵</h3>
+            <div class="music-controls">
+                <input id="musicUrl" type="text" class="pixel-input" placeholder="Paste YouTube link">
+                <button id="playMusicBtn" class="pixel-btn-small">Play</button>
+                <button id="stopMusicBtn" class="pixel-btn-small">Stop</button>
+            </div>
+            <div class="volume-control">
+                <label for="volumeSlider">Volume:</label>
+                <input id="volumeSlider" type="range" min="0" max="100" value="50">
+            </div>
+            <div id="musicPlayerContainer"></div>
+        </div>
+
         <div class="content-sections">
             <div class="section-grid">
                 <div class="love-message-section">
@@ -281,6 +304,7 @@
         </div>
     </footer>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="game.js"></script>
 </body>
 </html>
