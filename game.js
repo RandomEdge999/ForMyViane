@@ -1,4 +1,4 @@
-// Mira's Love Adventure - Enhanced Game Logic
+// Viane's Love Adventure - Enhanced Game Logic
 
 class LoveGame {
     constructor() {
@@ -9,55 +9,61 @@ class LoveGame {
         this.level = 1;
         this.gameRunning = false;
         this.gamePaused = false;
-        this.highScore = localStorage.getItem('miraHighScore') || 0;
+        this.highScore = localStorage.getItem('vianeHighScore') || 0;
+        
+        // Love statistics
+        this.heartsCollected = 0;
+        this.loveLevel = 1;
+        this.perfectDays = 0;
+        this.vianeHappiness = 100;
         
         // Character system
         this.availableCharacters = [
             {
-                id: 'mira',
-                name: 'Mira',
+                id: 'viane',
+                name: 'Viane',
                 unlocked: true,
                 requiredScore: 0,
-                description: 'The original Mira character'
+                description: 'The original Viane character'
             },
             {
                 id: 'princess',
-                name: 'Princess Mira',
+                name: 'Princess Viane',
                 unlocked: false,
                 requiredScore: 500,
                 description: 'Unlock at 500 points'
             },
             {
                 id: 'angel',
-                name: 'Angel Mira',
+                name: 'Angel Viane',
                 unlocked: false,
                 requiredScore: 1000,
                 description: 'Unlock at 1000 points'
             },
             {
                 id: 'magical',
-                name: 'Magical Mira',
+                name: 'Magical Viane',
                 unlocked: false,
                 requiredScore: 2000,
                 description: 'Unlock at 2000 points'
             },
             {
                 id: 'queen',
-                name: 'Queen Mira',
+                name: 'Queen Viane',
                 unlocked: false,
                 requiredScore: 5000,
                 description: 'Unlock at 5000 points'
             },
             {
                 id: 'goddess',
-                name: 'Goddess Mira',
+                name: 'Goddess Viane',
                 unlocked: false,
                 requiredScore: 10000,
                 description: 'Unlock at 10000 points'
             }
         ];
         
-        this.selectedCharacter = 'mira';
+        this.selectedCharacter = 'viane';
         
         // Player (Pixel Art Girl)
         this.player = {
@@ -100,7 +106,35 @@ class LoveGame {
         // Character patterns
         this.characterPatterns = {};
         
+        // Sound effects
+        this.sounds = {
+            heartCollect: this.createSound(800, 0.1, 'sine'),
+            powerUp: this.createSound(1200, 0.2, 'sine'),
+            levelUp: this.createSound(600, 0.3, 'triangle'),
+            gameOver: this.createSound(200, 0.5, 'sawtooth')
+        };
+        
         this.init();
+    }
+    
+    createSound(frequency, duration, type = 'sine') {
+        return () => {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        };
     }
     
     init() {
@@ -176,7 +210,7 @@ class LoveGame {
     loadPixelArt() {
         // Load character patterns
         this.characterPatterns = {
-            mira: this.createMiraSprite(),
+            viane: this.createVianeSprite(),
             princess: this.createPrincessSprite(),
             angel: this.createAngelSprite(),
             magical: this.createMagicalSprite(),
@@ -198,8 +232,8 @@ class LoveGame {
     }
     
     // Enhanced character sprites with better pixel art
-    createMiraSprite() {
-        // Cute 16x16 Mira character - Simple and adorable
+    createVianeSprite() {
+        // Cute 16x16 Viane character - Simple and adorable
         return [
             [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0], // Hair
             [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -221,7 +255,7 @@ class LoveGame {
     }
     
     createPrincessSprite() {
-        // Princess with fancy hair and elegant dress - Twin tails
+        // Princess Viane with fancy hair and elegant dress - Twin tails
         return [
             [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0], // Hair with twin tails
             [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -243,7 +277,7 @@ class LoveGame {
     }
     
     createAngelSprite() {
-        // Angel with flowing hair and ethereal design - Long flowing hair
+        // Angel Viane with flowing hair and ethereal design - Long flowing hair
         return [
             [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0], // Flowing hair
             [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -265,7 +299,7 @@ class LoveGame {
     }
     
     createMagicalSprite() {
-        // Magical girl with star-shaped hair and mystical design - Spiky hair
+        // Magical Viane with star-shaped hair and mystical design - Spiky hair
         return [
             [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0], // Star-shaped hair
             [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -287,7 +321,7 @@ class LoveGame {
     }
     
     createQueenSprite() {
-        // Queen with regal hair and majestic design - Elegant updo
+        // Queen Viane with regal hair and majestic design - Elegant updo
         return [
             [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0], // Regal hair
             [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -309,7 +343,7 @@ class LoveGame {
     }
     
     createGoddessSprite() {
-        // Goddess with divine hair and celestial design - Radiant hair
+        // Goddess Viane with divine hair and celestial design - Radiant hair
         return [
             [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0], // Divine hair
             [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -933,6 +967,14 @@ class LoveGame {
                 const points = this.player.hasMultiplier ? 20 : 10;
                 this.score += points;
                 
+                // Update love statistics
+                this.heartsCollected++;
+                this.vianeHappiness = Math.min(100, this.vianeHappiness + 2);
+                this.updateLoveLevel();
+                
+                // Play sound effect
+                this.sounds.heartCollect();
+                
                 // Create heart burst effect
                 this.createSpecialEffect('heartBurst', heart.x, heart.y);
                 this.addScreenShake(2);
@@ -952,6 +994,9 @@ class LoveGame {
             if (this.checkCollision(this.player, powerUp)) {
                 // Activate power-up
                 this.activatePowerUp(powerUp.type);
+                
+                // Play sound effect
+                this.sounds.powerUp();
                 
                 // Create power-up burst effect
                 this.createSpecialEffect('powerUpBurst', powerUp.x, powerUp.y);
@@ -1180,40 +1225,63 @@ class LoveGame {
     
     async generateLoveMessage() {
         const messageElement = document.getElementById('loveMessage');
-        messageElement.textContent = 'Generating a special love message for Mira... 💕';
+        messageElement.textContent = 'Generating a special love message for Viane... 💕';
         
         try {
-            // Using a free API for generating love messages
-            const response = await fetch('https://api.quotable.io/random?tags=love');
-            const data = await response.json();
+            // Using Hugging Face's free inference API for AI-generated love messages
+            const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer hf_your_token_here', // This would need a real token
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inputs: "Write a romantic love message for someone named Viane:",
+                    parameters: {
+                        max_length: 100,
+                        temperature: 0.8,
+                        do_sample: true
+                    }
+                })
+            });
             
-            // Customize the message for Mira
-            const loveMessages = [
-                `Mira, you are the most beautiful person I've ever known. Every moment with you feels like a dream come true! 💖`,
-                `My dearest Mira, your smile lights up my world like nothing else. You are my everything! 💕`,
-                `Mira, you are the missing piece to my puzzle. Life is so much better with you in it! 💗`,
-                `To my amazing Mira: You make every day feel like Valentine's Day. I love you more than words can express! 💓`,
-                `Mira, you are my sunshine on cloudy days, my comfort in difficult times, and my joy in happy moments! 💝`,
-                `My sweet Mira, you are the reason I believe in love. You are perfect in every way! 💖`,
-                `Mira, every pixel of my heart belongs to you. You are my favorite person in the whole world! 💕`,
-                `To the most wonderful Mira: You are not just my love, you are my best friend, my soulmate, my everything! 💗`
-            ];
-            
-            const randomMessage = loveMessages[Math.floor(Math.random() * loveMessages.length)];
-            messageElement.textContent = randomMessage;
-            
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data[0] && data[0].generated_text) {
+                    messageElement.textContent = `Viane, ${data[0].generated_text} 💖`;
+                    return;
+                }
+            }
         } catch (error) {
-            // Fallback messages if API fails
-            const fallbackMessages = [
-                "Mira, you are the most amazing person I've ever met! 💖",
-                "Every day with you is a blessing, Mira! 💕",
-                "Mira, you make my world complete! 💗",
-                "I love you more than anything, Mira! 💓",
-                "Mira, you are my everything! 💝"
-            ];
-            const fallbackMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
-            messageElement.textContent = fallbackMessage;
+            console.log('AI API failed, using fallback messages');
         }
+        
+        // Enhanced fallback messages with more variety and love
+        const loveMessages = [
+            `Viane, you are the most beautiful person I've ever known. Every moment with you feels like a dream come true! 💖`,
+            `My dearest Viane, your smile lights up my world like nothing else. You are my everything! 💕`,
+            `Viane, you are the missing piece to my puzzle. Life is so much better with you in it! 💗`,
+            `To my amazing Viane: You make every day feel like Valentine's Day. I love you more than words can express! 💓`,
+            `Viane, you are my sunshine on cloudy days, my comfort in difficult times, and my joy in happy moments! 💝`,
+            `My sweet Viane, you are the reason I believe in love. You are perfect in every way! 💖`,
+            `Viane, every pixel of my heart belongs to you. You are my favorite person in the whole world! 💕`,
+            `To the most wonderful Viane: You are not just my love, you are my best friend, my soulmate, my everything! 💗`,
+            `Viane, your laugh is the most beautiful melody I've ever heard. It makes my heart skip a beat! 💖`,
+            `My precious Viane, you are like a shooting star - rare, beautiful, and magical. I'm so lucky to have you! ✨`,
+            `Viane, you are the reason I wake up with a smile every morning. You make everything better! 🌅`,
+            `To my incredible Viane: You are not just my girlfriend, you are my inspiration, my motivation, my everything! 💕`,
+            `Viane, every day with you is an adventure filled with love, laughter, and pure happiness! 🎈`,
+            `My darling Viane, you are the most precious gift life has given me. I cherish every moment with you! 🎁`,
+            `Viane, you are my safe haven, my happy place, and my greatest love story! 💝`,
+            `To the amazing Viane: You make ordinary moments extraordinary just by being in them! ✨`,
+            `Viane, you are the light that guides me through darkness and the warmth that fills my heart! 🔥`,
+            `My beautiful Viane, you are proof that fairy tales are real and dreams do come true! 🧚‍♀️`,
+            `Viane, every time I see you, my heart does a little dance of joy! You are absolutely perfect! 💃`,
+            `To my sweet Viane: You are the reason I believe in forever. I want to spend eternity with you! ♾️`
+        ];
+        
+        const randomMessage = loveMessages[Math.floor(Math.random() * loveMessages.length)];
+        messageElement.textContent = randomMessage;
     }
     
     copyLoveMessage() {
@@ -1423,6 +1491,12 @@ class LoveGame {
             livesContainer.appendChild(heart);
         }
 
+        // Update love statistics
+        document.getElementById('heartsCollected').textContent = this.heartsCollected;
+        document.getElementById('loveLevel').textContent = this.loveLevel;
+        document.getElementById('perfectDays').textContent = this.perfectDays;
+        document.getElementById('vianeHappiness').textContent = this.vianeHappiness + '%';
+
         // Update character selection dropdown
         this.updateCharacterSelection();
         
@@ -1432,7 +1506,18 @@ class LoveGame {
         // Update high score
         if (this.score > this.highScore) {
             this.highScore = this.score;
-            localStorage.setItem('miraHighScore', this.highScore);
+            localStorage.setItem('vianeHighScore', this.highScore);
+        }
+    }
+    
+    updateLoveLevel() {
+        const newLoveLevel = Math.floor(this.heartsCollected / 50) + 1;
+        if (newLoveLevel > this.loveLevel) {
+            this.loveLevel = newLoveLevel;
+            this.perfectDays++;
+            this.sounds.levelUp();
+            this.createSpecialEffect('characterUnlock', this.player.x, this.player.y);
+            this.addScreenShake(5);
         }
     }
 
@@ -1473,7 +1558,7 @@ class LoveGame {
     
     showUnlockMessage() {
         const unlockedChars = this.availableCharacters.filter(char => 
-            char.unlocked && char.id !== 'mira'
+            char.unlocked && char.id !== 'viane'
         );
         
         if (unlockedChars.length > 0) {

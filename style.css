@@ -503,6 +503,7 @@ body {
     border-radius: 20px;
     border: 5px solid #ff1493;
     box-shadow: 0 8px 0 #c71585;
+    margin-bottom: 40px;
 }
 
 .power-ups-info h3 {
@@ -589,6 +590,197 @@ body {
     10% { opacity: 0.6; }
     90% { opacity: 0.6; }
     100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+/* Additional Cute Elements */
+.cute-sparkles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.sparkle {
+    position: absolute;
+    font-size: 1.5em;
+    animation: sparkleFloat 8s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.sparkle:nth-child(1) { left: 15%; animation-delay: 0.5s; }
+.sparkle:nth-child(2) { left: 35%; animation-delay: 1.5s; }
+.sparkle:nth-child(3) { left: 55%; animation-delay: 2.5s; }
+.sparkle:nth-child(4) { left: 75%; animation-delay: 3.5s; }
+.sparkle:nth-child(5) { left: 85%; animation-delay: 4.5s; }
+
+@keyframes sparkleFloat {
+    0%, 100% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+    10% { opacity: 0.7; }
+    50% { transform: translateY(50vh) rotate(180deg) scale(1.2); opacity: 1; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(-100px) rotate(360deg) scale(0.5); opacity: 0; }
+}
+
+/* Love Rain Effect */
+.love-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.love-drop {
+    position: absolute;
+    font-size: 1.2em;
+    animation: loveRain 4s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes loveRain {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+/* Pulsing Love Effect */
+.pulse-love {
+    animation: pulseLove 2s ease-in-out infinite;
+}
+
+@keyframes pulseLove {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Rainbow Text Effect */
+.rainbow-text {
+    background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+    background-size: 400% 400%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowShift 3s ease infinite;
+}
+
+@keyframes rainbowShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Love Statistics */
+.love-stats {
+    background: rgba(255, 105, 180, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    border: 5px solid #ff1493;
+    box-shadow: 0 8px 0 #c71585;
+    margin-bottom: 40px;
+}
+
+.love-stats h3 {
+    color: white;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 0 #c71585;
+    text-align: center;
+    font-size: 1.3em;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #ff69b4;
+    transition: transform 0.2s;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    font-size: 2.5em;
+    animation: bounce 1.5s infinite;
+    flex-shrink: 0;
+}
+
+.stat-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stat-name {
+    color: #ff1493;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.stat-value {
+    color: #c71585;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Romantic Quotes */
+.romantic-quotes {
+    background: rgba(255, 105, 180, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    border: 5px solid #ff1493;
+    box-shadow: 0 8px 0 #c71585;
+    margin-bottom: 40px;
+}
+
+.romantic-quotes h3 {
+    color: white;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 0 #c71585;
+    text-align: center;
+    font-size: 1.3em;
+}
+
+.quotes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.quote-item {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #ff69b4;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.quote-item:hover {
+    transform: translateY(-3px);
+}
+
+.quote-text {
+    margin: 0;
+    font-size: 0.9em;
+    color: #ff1493;
+    font-weight: bold;
+    line-height: 1.5;
 }
 
 /* Footer */
